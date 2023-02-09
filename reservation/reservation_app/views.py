@@ -1,9 +1,13 @@
 from django.shortcuts import render
+from django.views import View
+
 
 # Create your views here.
-def home(request):
-    return render(request, 'base.html')
+class HomeView(View):
+    def get(self, request):
+        return render(request, "base.html")
 
 
-def add_room(request):
-    return render(request, 'add_room.html')
+class AddRoomView(View):
+    def get(self, request):
+        return render(request, "add_room.html")
