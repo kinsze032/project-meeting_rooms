@@ -1,17 +1,17 @@
 from django.shortcuts import render, redirect
 from django.views import View
-from reservation_app.models import ConferenceRoom
+from rooms_management.models import ConferenceRoom
 
 
 # Create your views here.
 class HomeView(View):
     def get(self, request):
-        return render(request, "base.html")
+        return render(request, "rooms_management/base.html")
 
 
 class AddRoomView(View):
     def get(self, request):
-        return render(request, "add_room.html")
+        return render(request, "rooms_management/add_room.html")
 
     def post(self, request):
         name = request.POST.get('room-name')
@@ -27,11 +27,11 @@ class AddRoomView(View):
             projector = False
 
         if not name:
-            return render(request, 'add_room.html', context={'form_error': 'Nie podano nawy sali'})
+            return render(request, 'rooms_management/add_room.html', context={'form_error': 'Nie podano nawy sali'})
         if capacity <= 0:
-            return render(request, 'add_room.html', context={'form_error': 'Pojemność sali musi być dodatnia'})
+            return render(request, 'rooms_management/add_room.html', context={'form_error': 'Pojemność sali musi być dodatnia'})
         if ConferenceRoom.objects.filter(name=name).first():
-            return render(request, 'add_room.html', context={'form_error': 'Sala o podanej nazwie już istnieje'})
+            return render(request, 'rooms_management/add_room.html', context={'form_error': 'Sala o podanej nazwie już istnieje'})
 
         ConferenceRoom.objects.create(name=name, capacity=capacity, projector_availability=projector)
         return redirect('rooms-list')
@@ -40,4 +40,4 @@ class AddRoomView(View):
 class RoomListView(View):
     def get(self, request):
         rooms = ConferenceRoom.objects.all()
-        return render(request, "rooms.html", context={"rooms": rooms})
+        return render(request, "rooms_management/rooms.html", context={"rooms": rooms})
