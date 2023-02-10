@@ -9,25 +9,33 @@
   <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/sticky-footer/">
     <style>
     .footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    height: 60px; /* Set the fixed height of the footer here */
-    line-height: 60px; /* Vertically center the text there */
-    background-color: #f5f5f5;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 60px; /* Set the fixed height of the footer here */
+        line-height: 60px; /* Vertically center the text there */
+        background-color: #f5f5f5;
+        }
+     .btn-primary{
+         color: white;
+         background-color: darkslateblue;
+         border-color: darkslateblue;
     }
-</style>
+    </style>
 </head>
 <body>
-
+    {% include 'rooms_management/navbar.html' %}
     {% block content %}
 
-    {% include 'rooms_management/dashboard.html' %}
+{#    {% include 'rooms_management/dashboard.html' %}#}
+
 
     {% endblock %}
 
-<!-- Footer -->
 
+
+
+<!-- Footer -->
 <footer class="footer">
     <div class="container">
         <span class="text-muted">&#169;Kinga Szędzielarz</span>

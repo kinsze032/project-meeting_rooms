@@ -1,8 +1,18 @@
 {% extends 'rooms_management/base.html' %}
 
 {% block content %}
-    {% include 'rooms_management/navbar.html' %}
-<!-- Form -->
+    {% if error %}
+    <!-- Form error -->
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong>{{ error }}</strong>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    <!-- Form error -->
+    {% endif %}
+
+    <!-- Form -->
 <div class="card">
   <div class="card-body">
     <form action="" method="POST">
@@ -24,17 +34,7 @@
     </form>
   </div>
 </div>
-
-{% if error %}
-<!-- Form error -->
-<div class="alert alert-warning alert-dismissible fade show" role="alert">
-    <strong>Holy guacamole!</strong> You should check in on some of those fields below.
-    {{form_error}}
-  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-    <span aria-hidden="true">&times;</span>
-  </button>
-</div>
-<!-- Form error -->
-{% endif %}
     <!-- Form -->
+
 {% endblock %}
+

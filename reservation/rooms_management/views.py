@@ -27,11 +27,11 @@ class AddRoomView(View):
             projector = False
 
         if not name:
-            return render(request, 'rooms_management/add_room.html', context={'form_error': 'Nie podano nawy sali'})
+            return render(request, 'rooms_management/add_room.html', context={'error': 'Nie podano nazwy sali'})
         if capacity <= 0:
-            return render(request, 'rooms_management/add_room.html', context={'form_error': 'Pojemność sali musi być dodatnia'})
-        if ConferenceRoom.objects.filter(name=name).first():
-            return render(request, 'rooms_management/add_room.html', context={'form_error': 'Sala o podanej nazwie już istnieje'})
+            return render(request, 'rooms_management/add_room.html', context={'error': 'Pojemność sali musi być dodatnia'})
+        if ConferenceRoom.objects.filter(name=name):
+            return render(request, 'rooms_management/add_room.html', context={'error': 'Sala o podanej nazwie już istnieje'})
 
         ConferenceRoom.objects.create(name=name, capacity=capacity, projector_availability=projector)
         return redirect('rooms-list')
