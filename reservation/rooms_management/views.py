@@ -1,6 +1,7 @@
+import datetime
 from django.shortcuts import render, redirect
 from django.views import View
-from rooms_management.models import ConferenceRoom
+from rooms_management.models import ConferenceRoom, RoomReservation
 
 
 # Create your views here.
@@ -14,27 +15,45 @@ class AddRoomView(View):
         return render(request, "rooms_management/add_room.html")
 
     def post(self, request):
-        name = request.POST.get('room-name')
-        capacity = request.POST.get('capacity')
+        name = request.POST.get("room-name")
+        capacity = request.POST.get("capacity")
+
         if capacity:
             capacity = int(capacity)
         else:
             capacity = 0
-        projector = request.POST.get('projector')
-        if projector == 'true':
+        projector = request.POST.get("projector")
+
+        if projector == "true":
             projector = True
         else:
             projector = False
 
         if not name:
-            return render(request, 'rooms_management/add_room.html', context={'error': 'Nie podano nazwy sali'})
-        if capacity <= 0:
-            return render(request, 'rooms_management/add_room.html', context={'error': 'Pojemność sali musi być dodatnia'})
-        if ConferenceRoom.objects.filter(name=name):
-            return render(request, 'rooms_management/add_room.html', context={'error': 'Sala o podanej nazwie już istnieje'})
+            return render(
+                request,
+                "rooms_management/add_room.html",
+                context={"error": "Nie podano nazwy sali"},
+            )
 
-        ConferenceRoom.objects.create(name=name, capacity=capacity, projector_availability=projector)
-        return redirect('rooms-list')
+        if capacity <= 0:
+            return render(
+                request,
+                "rooms_management/add_room.html",
+                context={"error": "Pojemność sali musi być dodatnia"},
+            )
+
+        if ConferenceRoom.objects.filter(name=name):
+            return render(
+                request,
+                "rooms_management/add_room.html",
+                context={"error": "Sala o podanej nazwie już istnieje"},
+            )
+
+        ConferenceRoom.objects.create(
+            name=name, capacity=capacity, projector_availability=projector
+        )
+        return redirect("rooms-list")
 
 
 class RoomListView(View):
@@ -47,45 +66,81 @@ class DeleteRoomView(View):
     def get(self, request, room_id):
         room = ConferenceRoom.objects.get(id=room_id)
         room.delete()
-        return redirect('rooms-list')
+        return redirect("rooms-list")
 
 
 class ModifyRoomView(View):
     def get(self, request, room_id):
         room = ConferenceRoom.objects.filter(id=room_id)
-        return render(request, "rooms_management/modify_room.html", context={'room': room})
+        return render(request, "rooms_management/modify_room.html", context={"room": room})
 
     def post(self, request, room_id):
         room = ConferenceRoom.objects.get(id=room_id)
-        name = request.POST.get('room-name')
-        capacity = request.POST.get('capacity')
+        name = request.POST.get("room-name")
+        capacity = request.POST.get("capacity")
 
         if capacity:
             capacity = int(capacity)
         else:
             capacity = 0
-        projector = request.POST.get('projector')
+        projector = request.POST.get("projector")
 
-        if projector == 'true':
+        if projector == "true":
             projector = True
         else:
             projector = False
 
         if not name:
-            return render(request, 'rooms_management/modify_room.html',
-                          context={'room': room,
-                                   'error': 'Nie podano nazwy sali'})
+            return render(
+                request,
+                "rooms_management/modify_room.html",
+                context={"room": room, "error": "Nie podano nazwy sali"},
+            )
+
         if capacity <= 0:
-            return render(request, 'rooms_management/modify_room.html',
-                          context={'room': room,
-                                   'error': 'Pojemność sali musi być dodatnia'})
+            return render(
+                request,
+                "rooms_management/modify_room.html",
+                context={"room": room, "error": "Pojemność sali musi być dodatnia"},
+            )
+
         if name != room.name and ConferenceRoom.objects.filter(name=name).first():
-            return render(request, 'rooms_management/modify_room.html',
-                          context={'room': room,
-                                   'error': 'Sala o podanej nazwie już istnieje'})
+            return render(
+                request,
+                "rooms_management/modify_room.html",
+                context={"room": room, "error": "Sala o podanej nazwie już istnieje"},
+            )
 
         room.name = name
         room.capacity = capacity
         room.projector_availability = projector
         room.save()
+        return redirect("rooms-list")
+
+
+class ReservationView(View):
+    def get(self, request, room_id):
+        room = ConferenceRoom.objects.get(id=room_id)
+        return render(request, "rooms_management/reservation.html", context={"room": room})
+
+    def post(self, request, room_id):
+        room = ConferenceRoom.objects.get(id=room_id)
+        date = request.POST.get("reservation-date")
+        comment = request.POST.get("comment")
+
+        if RoomReservation.objects.filter(room=room, date=date):
+            return render(
+                request,
+                "rooms_management/reservation.html",
+                context={"room": room, "date": date, "comment": comment},
+            )
+
+        if date < str(datetime.date.today()):
+            return render(
+                request,
+                "rooms_management/reservation.html",
+                context={"room": room, "error": "Data jest z przeszłości!"},
+            )
+
+        RoomReservation.objects.create(room=room, date=date, comment=comment)
         return redirect('rooms-list')
