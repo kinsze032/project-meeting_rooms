@@ -1,5 +1,5 @@
 {% extends 'rooms_management/base.html' %}
-{% block title %} Dodaj salę {% endblock title %}
+{% block title %} Edytuj salę {% endblock title %}
 
 {% block content %}
     {% if error %}
@@ -20,18 +20,18 @@
       {% csrf_token %}
       <div class="form-group">
         <label for="room-name">Nazwa sali</label>
-        <input type="text" class="form-control" id="room-name" aria-describedby="room-name-help" placeholder="Nazwa sali" name="room-name">
+        <input type="text" class="form-control" id="room-name" aria-describedby="room-name-help" placeholder="Nazwa sali" name="room-name" value="{{ room.name }}">
         <small id="room-name-help" class="form-text text-muted">Nazwa sali musi być unikatowa.</small>
       </div>
       <div class="form-group">
         <label for="capacity">Pojemność sali</label>
-        <input type="number" step="1" class="form-control" id="capacity" placeholder="10" name="capacity">
+        <input type="number" step="1" class="form-control" id="capacity" placeholder="10" name="capacity" value="{{ room.capacity }}">
       </div>
       <div class="form-check">
         <input type="checkbox" class="form-check-input" name="projector" id="projector" value="true">
         <label class="form-check-label" for="projector">Dostępność rzutnika</label>
       </div>
-      <button type="submit" class="btn btn-primary">Dodaj salę</button>
+      <button type="submit" class="btn btn-primary">Edytuj salę</button>
     </form>
   </div>
 </div>
